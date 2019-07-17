@@ -1,21 +1,28 @@
 'use strict';
 
+const Path = require('path');
 const Hapi = require('@hapi/hapi');
+const Hoek = require('@hapi/hoek');
+const routes = require('./routes')
 
 const init = async () => {
+  // console.log(routes);
 
   const server = Hapi.server({
     port: 3000,
     host: 'localhost'
   });
+  await server.register(require('@hapi/vision'));
 
-  server.route({
-    method: 'GET',
-    path:'/',
-    handler: (request, h) => {
-        return 'Hello World!';
-    }
+  server.views({
+      engines: {
+          html: require('handlebars')
+      },
+      relativeTo: __dirname,
+      path: 'templates'
   });
+
+  server.route(routes);
 
   await server.start();
   console.log('Server running on %s', server.info.uri);
