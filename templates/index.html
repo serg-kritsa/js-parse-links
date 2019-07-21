@@ -1,1 +1,34 @@
-<h1>Hello world!</h1>
+<h1>Статистика наиболее частых слов</h1>
+{{ test }}
+<div>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quam unde in sit!</div>
+<div><button id="report-maker" onclick="makeReport()" >Подготовить отчёт </button></div>
+<div id="report-link"></div>
+<script>
+  const makeReport = () => {
+    document.getElementById('report-maker').disabled = true
+    document.getElementById('report-maker').innerText = 'Готовится...'
+
+    let urls = ['https://tass.ru/v-strane', 'https://www.kommersant.ru/rubric/47']
+    var body = 'url0=' + encodeURIComponent(urls[0]) +
+    '&url1=' + encodeURIComponent(urls[1]);
+    
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", '/make-report', true);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.onerror = _ => console.error('xhr error');
+    xhr.onload = () => {
+      if(xhr.responseText){
+        // let a = document.createElement('a')
+        // let node = document.createTextNode('Посмотреть отчёт')
+        // a.setAttribute('href', '/show-report')
+        // a.appendChild(node)
+        document.getElementById('report-link')
+          .innerHTML = '<a href="/show-report">Посмотреть отчёт</a>'
+        document.getElementById('report-maker').innerText = 'Подготовить отчёт'
+        document.getElementById('report-maker').disabled = false
+      }
+    }
+    xhr.send(body);
+  }
+  // makeReport()
+</script>

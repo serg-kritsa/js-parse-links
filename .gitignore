@@ -1,2 +1,6 @@
 node_modules
 package-lock.json
+users-data/report-word-stats.pdf
+utils/fonts/Roboto-Italic.ttf
+utils/fonts/Roboto-Medium.ttf
+utils/fonts/Roboto-MediumItalic.ttf

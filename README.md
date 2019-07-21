@@ -1,2 +1,2 @@
-# Test parse url
-Test app in Hapi.js
+# Parse Url App
+Demo project in Hapi.js that provide service of showing top words in page
