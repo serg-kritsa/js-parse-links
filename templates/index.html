@@ -1,34 +1,199 @@
-<h1>Статистика наиболее частых слов</h1>
-{{ test }}
-<div>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quam unde in sit!</div>
-<div><button id="report-maker" onclick="makeReport()" >Подготовить отчёт </button></div>
-<div id="report-link"></div>
-<script>
-  const makeReport = () => {
-    document.getElementById('report-maker').disabled = true
-    document.getElementById('report-maker').innerText = 'Готовится...'
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta htatp-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Word Stat App</title>
+  </head>
+  <body>
+    <header id="showcase">
+      <h1>Статистика наиболее частых слов</h1>
+    </header>
+    <!-- {{ test }} -->
+    <div id="content" class="container">
+      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum quisquam,
+      sapiente incidunt veritatis perferendis veniam, odit cumque, nisi
+      temporibus atque maiores! Voluptates, saepe?
+    </div>
+    <div>
+      <a href="" id="report-maker" class="btn" onclick="makeReport(event)"
+        >Подготовить отчёт
+      </a>
+    </div>
+    <div id="report-link"></div>
+    <script>
+      const makeReport = e => {
+        e.preventDefault();
+        document.getElementById("report-maker").disabled = true;
+        document.getElementById("report-maker").innerText = "Готовится...";
 
-    let urls = ['https://tass.ru/v-strane', 'https://www.kommersant.ru/rubric/47']
-    var body = 'url0=' + encodeURIComponent(urls[0]) +
-    '&url1=' + encodeURIComponent(urls[1]);
-    
-    var xhr = new XMLHttpRequest();
-    xhr.open("POST", '/make-report', true);
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-    xhr.onerror = _ => console.error('xhr error');
-    xhr.onload = () => {
-      if(xhr.responseText){
-        // let a = document.createElement('a')
-        // let node = document.createTextNode('Посмотреть отчёт')
-        // a.setAttribute('href', '/show-report')
-        // a.appendChild(node)
-        document.getElementById('report-link')
-          .innerHTML = '<a href="/show-report">Посмотреть отчёт</a>'
-        document.getElementById('report-maker').innerText = 'Подготовить отчёт'
-        document.getElementById('report-maker').disabled = false
+        let urls = [
+          "https://tass.ru/v-strane",
+          "https://www.kommersant.ru/rubric/47"
+        ];
+        var body =
+          "url0=" +
+          encodeURIComponent(urls[0]) +
+          "&url1=" +
+          encodeURIComponent(urls[1]);
+
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "/make-report", true);
+        xhr.setRequestHeader(
+          "Content-Type",
+          "application/x-www-form-urlencoded"
+        );
+        xhr.onerror = _ => console.error("xhr error");
+        xhr.onload = () => {
+          if (xhr.responseText) {
+            // let a = document.createElement('a')
+            // let node = document.createTextNode('Посмотреть отчёт')
+            // a.setAttribute('href', '/show-report')
+            // a.appendChild(node)
+            document.getElementById("report-link").innerHTML =
+              '<a href="/show-report" class="btn btn-show-report">Посмотреть отчёт</a>';
+            document.getElementById("report-maker").innerText =
+              "Подготовить отчёт";
+            document.getElementById("report-maker").disabled = false;
+          }
+        };
+        xhr.send(body);
+      };
+      // makeReport()
+    </script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
       }
-    }
-    xhr.send(body);
-  }
-  // makeReport()
-</script>
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        background-color: #12475f;
+        color: #fff;
+        line-height: 1.6;
+        text-align: center;
+      }
+
+      .container {
+        max-width: 960px;
+        margin: auto;
+        padding: 0 30px;
+      }
+
+      #showcase {
+        height: 300px;
+      }
+
+      #showcase h1 {
+        font-size: 3rem;
+        line-height: 1.3;
+        position: relative;
+        animation: heading;
+        animation-duration: 3s;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes heading {
+        0% {
+          top: -50px;
+        }
+        100% {
+          top: 150px;
+        }
+      }
+
+      #content {
+        position: relative;
+        animation-name: content;
+        animation-duration: 3s;
+        animation-fill-mode: forwards;
+      }
+
+      @keyframes content {
+        0% {
+          left: -1000px;
+        }
+        100% {
+          left: 0;
+        }
+      }
+
+      .btn {
+        display: inline-block;
+        color: #fff;
+        text-decoration: none;
+        padding: 1rem 2rem;
+        border: #fff 1px solid;
+        margin-top: 40px;
+        opacity: 0;
+        animation-name: btn;
+        animation-duration: 3s;
+        animation-delay: 3s;
+        animation-fill-mode: forwards;
+
+        transition-property: transform;
+        transition-duration: 1s;
+      }
+
+      .btn:hover {
+        background-color: darkred;
+        transform: scale(1.1);
+      }
+
+      @keyframes btn {
+        0% {
+          opacity: 0;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+      .btn-show-report{
+        animation-delay: 0s
+      }
+
+      @media screen and (max-width:320px){
+        #showcase {
+          height: 200px;
+        }
+
+        #showcase h1 {
+          font-size: 1.6rem;
+        }
+
+        @keyframes heading {
+          0% {
+            top: -50px;
+          }
+          100% {
+            top: 150px;
+          }
+        }
+        .container {
+          display: none;
+        }
+      }
+      
+      @media screen and (max-width:768px){
+        #showcase {
+          height: 200px;
+        }
+
+        #showcase h1 {
+          font-size: 1.8rem;
+        }
+
+        @keyframes heading {
+          0% {
+            top: -50px;
+          }
+          100% {
+            top: 100px;
+          }
+        }
+      }
+    </style>
+  </body>
+</html>
