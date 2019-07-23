@@ -80,6 +80,7 @@
         // let node = document.createTextNode('Посмотреть отчёт')
         // a.appendChild(node)
         newInput.setAttribute('type', 'text')
+        newInput.setAttribute('class', 'url-showing')
         newInput.setAttribute('placeholder', 'Введите адрес источника')
         
         newInput.setAttribute('name', `url-${urlsParentDiv.children.length+1}`)
@@ -231,8 +232,28 @@
       .make-report-form #report-urls input{
         padding: 0.3rem 2rem;
         font-size: 1.5rem;
-        
       }
+      .url-showing {
+        opacity: 0;
+        animation-name: new-url;
+        animation-duration: 2000ms;
+        animation-delay: 150ms; 
+        animation-timing-function: ease-in-out;
+        animation-fill-mode: forwards;
+      }
+      @keyframes new-url {
+      0% {
+        opacity: 0;
+        transform: scale(0) translateY(-10px)
+      }
+      60% {
+        transform: scale(1.2) translateY(5px)
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0px);
+      }
+    }
       #report-urls-control input {
         margin-bottom: 0.5rem;
         padding: 1rem 2rem;
