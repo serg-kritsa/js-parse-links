@@ -15,11 +15,12 @@ const init = async () => {
   await server.register(require('@hapi/vision'));
   await server.register(require('@hapi/inert'));
   server.views({
-      engines: {
-          html: require('handlebars')
-      },
-      relativeTo: __dirname,
-      path: 'templates'
+    engines: {
+        html: require('handlebars')
+    },
+    relativeTo: __dirname,
+    path: 'templates',
+    // isCached: false, // for developing 
   });
 
   server.route(routes);

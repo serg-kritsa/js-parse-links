@@ -10,59 +10,154 @@
     <header id="showcase">
       <h1>Статистика наиболее частых слов</h1>
     </header>
+    
     <!-- {{ test }} -->
     <div id="content" class="container">
-      Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum quisquam,
-      sapiente incidunt veritatis perferendis veniam, odit cumque, nisi
-      temporibus atque maiores! Voluptates, saepe?
-    </div>
-    <div>
-      <a href="" id="report-maker" class="btn" onclick="makeReport(event)"
-        >Подготовить отчёт
-      </a>
+      <div class="lorem">
+        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum quisquam,
+        sapiente incidunt veritatis perferendis veniam, odit cumque, nisi
+        temporibus atque maiores! Voluptates, saepe?
+      </div>
+      <form class="make-report-form" onsubmit="makeReportFromUrls(event)">
+        <label for="">Адрес источника</label>
+        <div id="report-urls">
+          <input type="text" name="url-1"  placeholder="Введите адрес источника"/>
+        </div>
+        <div id="report-urls-control">
+          <input type="button" value="Добавить источник" onclick="addUrlToSource()">
+          <input type="button" value="Удалить источник" onclick="removeUrlFromSource()">
+        </div>
+        <input type="submit" id="report-maker" value="Подготовить отчёт">
+      </form>
     </div>
     <div id="report-link"></div>
+    <div>
+      <a href="" id="demo-report-maker" class="btn" onclick="makeDemoReport(event)"
+      >Подготовить демо-отчёт
+      </a>
+    </div>
     <script>
-      const makeReport = e => {
+      document.getElementById('report-urls-control').style.display = 'none';
+      document.querySelector('#report-urls input').onfocus = _ => {
+        document.getElementById('report-urls-control').style.display = 'block';
+      }
+      const makeReportFromUrls = e => {
         e.preventDefault();
-        document.getElementById("report-maker").disabled = true;
-        document.getElementById("report-maker").innerText = "Готовится...";
+        document.getElementById('report-urls-control').style.display = 'none';
+        
+        // prepare post body from url inputs
+        let urlsParentDiv = document.getElementById('report-urls')        
+        // console.log(urlsParentDiv.children.length);
+        let body = ''
+        let denyReport = false
+        for(let idx of urlsParentDiv.children){
+          if (idx.value === '') {
+            denyReport = true
+          }
+          let part = 
+          `${idx.name}=${encodeURIComponent(idx.value)}&`
+          body += part
+        }
+        body = body.slice(0,-1)
+        console.log(body);
 
+        // send ajax
+        // links for debug
+        // https://tass.ru
+        // https://www.kommersant.ru
+        if (!denyReport) {
+          makeReportHandler(
+            body
+            ,"report-maker"
+            ,"Готовится...", "Подготовить отчёт"
+          )
+        }
+      }
+      const addUrlToSource = _ => {
+        // append url input
+        let urlsParentDiv = document.getElementById('report-urls')        
+        let newInput = document.createElement('input')
+        // let node = document.createTextNode('Посмотреть отчёт')
+        // a.appendChild(node)
+        newInput.setAttribute('type', 'text')
+        newInput.setAttribute('placeholder', 'Введите адрес источника')
+        
+        newInput.setAttribute('name', `url-${urlsParentDiv.children.length+1}`)
+
+        if(urlsParentDiv.children.length === 1 ){
+          document.querySelector('.make-report-form label').innerText = 'Адреса источников'
+        }
+        urlsParentDiv.appendChild(newInput)
+      }
+      const removeUrlFromSource = _ => {
+        // remove url input
+        let urlsParentDiv = document.getElementById('report-urls');
+        if(urlsParentDiv.children.length === 2 ){
+          document.querySelector('.make-report-form label').innerText = 'Адрес источника'
+        }
+        // let removingElement = urlsParentDiv.lastChild
+        urlsParentDiv.removeChild(urlsParentDiv.lastChild);
+      }
+      const makeDemoReport = e => {
+        e.preventDefault();
+        
         let urls = [
           "https://tass.ru/v-strane",
           "https://www.kommersant.ru/rubric/47"
         ];
         var body =
-          "url0=" +
-          encodeURIComponent(urls[0]) +
-          "&url1=" +
-          encodeURIComponent(urls[1]);
-
+        `url0=${encodeURIComponent(urls[0])}&
+        url1=${encodeURIComponent(urls[1])}`;
+        
+        makeReportHandler(
+          body
+          ,"demo-report-maker"
+          ,"Готовится...", "Подготовить демо-отчёт"
+        )
+      };
+      const makeReportHandler = (postRequestData, handlerId, btnTextInProgress, btnTextInReady) => {
+        document.getElementById("report-link").innerHTML = '';
+        document.getElementById(handlerId).disabled = true;
+        // a || button
+        if(document.getElementById(handlerId).hasAttribute('value'))
+        document.getElementById(handlerId).value = btnTextInProgress;
+        else
+        document.getElementById(handlerId).innerText = btnTextInProgress;
+        // console.log(21, document.getElementById(handlerId).hasAttribute('value'))
+        
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/make-report", true);
         xhr.setRequestHeader(
           "Content-Type",
           "application/x-www-form-urlencoded"
         );
-        xhr.onerror = _ => console.error("xhr error");
+        // xhr.onerror = _ => console.error(12, "xhr error");
         xhr.onload = () => {
-          if (xhr.responseText) {
-            // let a = document.createElement('a')
-            // let node = document.createTextNode('Посмотреть отчёт')
-            // a.setAttribute('href', '/show-report')
-            // a.appendChild(node)
+          // a || button
+          if(document.getElementById(handlerId).hasAttribute('value'))
+            document.getElementById(handlerId).value = btnTextInReady;
+          else
+            document.getElementById(handlerId).innerText = btnTextInReady;
+          
+          document.getElementById(handlerId).disabled = false;
+          
+          if(xhr.status === 500){
+            document.getElementById("report-link").innerHTML = '<b>Произошла ошибка. Убедитесь в правильности адреса</b>'
+
+          }
+          if (xhr.status === 200 && xhr.responseText ) {
             document.getElementById("report-link").innerHTML =
-              '<a href="/show-report" class="btn btn-show-report">Посмотреть отчёт</a>';
-            document.getElementById("report-maker").innerText =
-              "Подготовить отчёт";
-            document.getElementById("report-maker").disabled = false;
+            '<a href="/show-report" class="btn btn-show-report">Посмотреть отчёт</a>';
+            
           }
         };
-        xhr.send(body);
-      };
-      // makeReport()
+        xhr.send(postRequestData); 
+      }
     </script>
     <style>
+      :root{
+        --bg-color: #12475f;
+      }
       * {
         margin: 0;
         padding: 0;
@@ -70,7 +165,7 @@
 
       body {
         font-family: Arial, Helvetica, sans-serif;
-        background-color: #12475f;
+        background-color: var(--bg-color);
         color: #fff;
         line-height: 1.6;
         text-align: center;
@@ -83,7 +178,7 @@
       }
 
       #showcase {
-        height: 300px;
+        height: 220px;
       }
 
       #showcase h1 {
@@ -120,6 +215,65 @@
         }
       }
 
+      /* FORM */
+      .make-report-form {
+        display: flex;
+        flex-direction: column
+      }
+      .make-report-form #report-urls{
+        margin-bottom: 0.5rem;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: space-around */
+        /* align-items: stretch        */
+        
+      }
+      .make-report-form #report-urls input{
+        padding: 0.3rem 2rem;
+        font-size: 1.5rem;
+        
+      }
+      #report-urls-control input {
+        margin-bottom: 0.5rem;
+        padding: 1rem 2rem;
+        border: #fff 1px solid;
+        cursor: pointer;
+        font-size: 1rem;
+        color: #fff;
+      }
+      #report-urls-control input:first-child {
+        background-color: forestgreen;
+      }
+      #report-urls-control input:last-child {
+        background-color: orangered;
+      }
+      #report-urls-control input:first-child:hover {
+        background-color: darkgreen;
+      }
+      #report-urls-control input:last-child:hover {
+        background-color: darkred;
+      }
+      #report-maker{
+        padding: 1rem 2rem;
+        background-color: var(--bg-color);
+        color: #fff;
+        font-size: 1rem;
+        border: #fff 1px solid;
+        cursor: pointer;
+        opacity: 0;
+        animation-name: btn;
+        animation-duration: 3s;
+        animation-delay: 3s;
+        animation-fill-mode: forwards;
+        
+        transition-property: transform;
+        transition-duration: 1s;
+      }
+      #report-maker:hover {
+        background-color: darkred;
+        transform: scale(1.1);
+      }   
+      /* /FORM */
       .btn {
         display: inline-block;
         color: #fff;
@@ -154,6 +308,7 @@
         animation-delay: 0s
       }
 
+                              /* MEDIA QUERIS */
       @media screen and (max-width:320px){
         #showcase {
           height: 200px;
@@ -171,12 +326,20 @@
             top: 150px;
           }
         }
-        .container {
+        .make-report-form label {
+          margin: 0.5rem 0;
+        }
+        .lorem {
           display: none;
         }
+        #report-urls-control input {
+          width: 100%;
+        }
       }
-      
-      @media screen and (max-width:768px){
+
+      @media screen 
+      and (min-width: 321px) 
+      and (max-width:768px){
         #showcase {
           height: 200px;
         }
@@ -192,6 +355,12 @@
           100% {
             top: 100px;
           }
+        }
+        .lorem {
+          display: none;
+        }
+        #report-urls-control input {
+          width: 49%;
         }
       }
     </style>
