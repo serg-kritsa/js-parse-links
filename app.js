@@ -13,7 +13,7 @@ const init = async () => {
     host: 'localhost'
   });
   await server.register(require('@hapi/vision'));
-  await server.register(require('@hapi/inert'));
+  // await server.register(require('@hapi/inert')); // for h.file()
   server.views({
     engines: {
         html: require('handlebars')

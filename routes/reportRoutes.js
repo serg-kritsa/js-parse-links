@@ -1,6 +1,7 @@
 const axios = require('axios')
 const fs = require('fs')
 const pathToReport = require('../constants').PATH_TO_REPORT
+const pathToReportsDir = require('../constants').PATH_TO_REPORTS_DIR
 
 const routes = [
   {
@@ -13,8 +14,6 @@ const routes = [
         let data = res.data;
         let dataBody = data.slice(data.indexOf('<body'), data.indexOf('</body'))
         console.log('html body lenght', dataBody.length)
-        // console.log(data.indexOf('<body'), data.indexOf('</body'))
-        // console.log(data.length, dataBody.length);
         
         const wordArr = dataBody.toLowerCase().match(/[А-Яа-я]+/g);
         const lengthFilter = wordArr.filter(word => word.length > 4)
@@ -33,7 +32,6 @@ const routes = [
           if( sortedValues[i-1] > sortedValues[i] ){
             top.push(sortedValues[i-1])
             n++
-            // console.log(sortedValues[i-1], sortedValues[i], n);
           }      
         }
         
@@ -53,10 +51,15 @@ const routes = [
         sortedTopWord.sort((a, b) => b[1] - a[1] );
         let stats = sortedTopWord.map(elem => `слово "${elem[0]}" встречается ${elem[1]} раз`).join(', ')
         // console.log(top, topWord, sortedTopWord, stats);
-        // stats = 
         return `На странице ${url} ${stats}\n\n` 
       }
       // ========================= BEGIN =======================================
+      // // check existing data folder 
+      try {
+        fs.readdirSync(pathToReportsDir)
+      } catch (err) {
+        fs.mkdirSync(pathToReportsDir)
+      }
       // // remove prev report
       fs.stat(pathToReport, (err, stat) => {
         if(err) return console.error(err);      
@@ -103,7 +106,6 @@ const routes = [
       
       // // return file || 404 
       // return h.file(pathToReport)
-  
     }
   }
   ,
