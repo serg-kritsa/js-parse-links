@@ -10,8 +10,7 @@
     <header id="showcase">
       <h1>Статистика наиболее частых слов</h1>
     </header>
-    
-    <!-- {{ test }} -->
+
     <div id="content" class="container">
       <div class="lorem">
         Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eum quisquam,
@@ -21,44 +20,59 @@
       <form class="make-report-form" onsubmit="makeReportFromUrls(event)">
         <label for="">Адрес источника</label>
         <div id="report-urls">
-          <input type="text" name="url-1"  placeholder="Введите адрес источника"/>
+          <input
+            type="text"
+            name="url-1"
+            placeholder="Введите адрес источника"
+          />
         </div>
         <div id="report-urls-control">
-          <input type="button" value="Добавить источник" onclick="addUrlToSource()">
-          <input type="button" value="Удалить источник" onclick="removeUrlFromSource()">
+          <input
+            type="button"
+            value="Добавить источник"
+            onclick="addUrlToSource()"
+          />
+          <input
+            type="button"
+            value="Удалить источник"
+            onclick="removeUrlFromSource()"
+          />
         </div>
-        <input type="submit" id="report-maker" value="Подготовить отчёт">
+        <input type="submit" id="report-maker" value="Подготовить отчёт" />
       </form>
     </div>
     <div id="report-link"></div>
     <div>
-      <a href="" id="demo-report-maker" class="btn" onclick="makeDemoReport(event)"
-      >Подготовить демо-отчёт
+      <a
+        href=""
+        id="demo-report-maker"
+        class="btn"
+        onclick="makeDemoReport(event)"
+        >Подготовить демо-отчёт
       </a>
     </div>
     <script>
-      document.getElementById('report-urls-control').style.display = 'none';
-      document.querySelector('#report-urls input').onfocus = _ => {
-        document.getElementById('report-urls-control').style.display = 'block';
-      }
+      document.getElementById("report-urls-control").style.display = "none";
+      document.querySelector("#report-urls input").onfocus = _ => {
+        document.getElementById("report-urls-control").style.display = "block";
+      };
       const makeReportFromUrls = e => {
         e.preventDefault();
-        document.getElementById('report-urls-control').style.display = 'none';
-        
+        document.getElementById("report-urls-control").style.display = "none";
+
         // prepare post body from url inputs
-        let urlsParentDiv = document.getElementById('report-urls')        
+        let urlsParentDiv = document.getElementById("report-urls");
         // console.log(urlsParentDiv.children.length);
-        let body = ''
-        let denyReport = false
-        for(let idx of urlsParentDiv.children){
-          if (idx.value === '') {
-            denyReport = true
+        let body = "";
+        let denyReport = false;
+        for (let idx of urlsParentDiv.children) {
+          if (idx.value === "") {
+            denyReport = true;
           }
-          let part = 
-          `${idx.name}=${encodeURIComponent(idx.value)}&`
-          body += part
+          let part = `${idx.name}=${encodeURIComponent(idx.value)}&`;
+          body += part;
         }
-        body = body.slice(0,-1)
+        body = body.slice(0, -1);
         console.log(body);
 
         // send ajax
@@ -67,65 +81,71 @@
         // https://www.kommersant.ru
         if (!denyReport) {
           makeReportHandler(
-            body
-            ,"report-maker"
-            ,"Готовится...", "Подготовить отчёт"
-          )
+            body,
+            "report-maker",
+            "Готовится...",
+            "Подготовить отчёт"
+          );
         }
-      }
+      };
       const addUrlToSource = _ => {
         // append url input
-        let urlsParentDiv = document.getElementById('report-urls')        
-        let newInput = document.createElement('input')
-        // let node = document.createTextNode('Посмотреть отчёт')
-        // a.appendChild(node)
-        newInput.setAttribute('type', 'text')
-        newInput.setAttribute('class', 'url-showing')
-        newInput.setAttribute('placeholder', 'Введите адрес источника')
-        
-        newInput.setAttribute('name', `url-${urlsParentDiv.children.length+1}`)
+        let urlsParentDiv = document.getElementById("report-urls");
+        let newInput = document.createElement("input");
+        newInput.setAttribute("type", "text");
+        newInput.setAttribute("class", "url-showing");
+        newInput.setAttribute("placeholder", "Введите адрес источника");
 
-        if(urlsParentDiv.children.length === 1 ){
-          document.querySelector('.make-report-form label').innerText = 'Адреса источников'
+        newInput.setAttribute(
+          "name",
+          `url-${urlsParentDiv.children.length + 1}`
+        );
+
+        if (urlsParentDiv.children.length === 1) {
+          document.querySelector(".make-report-form label").innerText =
+            "Адреса источников";
         }
-        urlsParentDiv.appendChild(newInput)
-      }
+        urlsParentDiv.appendChild(newInput);
+      };
       const removeUrlFromSource = _ => {
         // remove url input
-        let urlsParentDiv = document.getElementById('report-urls');
-        if(urlsParentDiv.children.length === 2 ){
-          document.querySelector('.make-report-form label').innerText = 'Адрес источника'
+        let urlsParentDiv = document.getElementById("report-urls");
+        if (urlsParentDiv.children.length === 2) {
+          document.querySelector(".make-report-form label").innerText =
+            "Адрес источника";
         }
-        // let removingElement = urlsParentDiv.lastChild
         urlsParentDiv.removeChild(urlsParentDiv.lastChild);
-      }
+      };
       const makeDemoReport = e => {
         e.preventDefault();
-        
+
         let urls = [
           "https://tass.ru/v-strane",
           "https://www.kommersant.ru/rubric/47"
         ];
-        var body =
-        `url0=${encodeURIComponent(urls[0])}&
+        var body = `url0=${encodeURIComponent(urls[0])}&
         url1=${encodeURIComponent(urls[1])}`;
-        
+
         makeReportHandler(
-          body
-          ,"demo-report-maker"
-          ,"Готовится...", "Подготовить демо-отчёт"
-        )
+          body,
+          "demo-report-maker",
+          "Готовится...",
+          "Подготовить демо-отчёт"
+        );
       };
-      const makeReportHandler = (postRequestData, handlerId, btnTextInProgress, btnTextInReady) => {
-        document.getElementById("report-link").innerHTML = '';
+      const makeReportHandler = (
+        postRequestData,
+        handlerId,
+        btnTextInProgress,
+        btnTextInReady
+      ) => {
+        document.getElementById("report-link").innerHTML = "";
         document.getElementById(handlerId).disabled = true;
         // a || button
-        if(document.getElementById(handlerId).hasAttribute('value'))
-        document.getElementById(handlerId).value = btnTextInProgress;
-        else
-        document.getElementById(handlerId).innerText = btnTextInProgress;
-        // console.log(21, document.getElementById(handlerId).hasAttribute('value'))
-        
+        if (document.getElementById(handlerId).hasAttribute("value"))
+          document.getElementById(handlerId).value = btnTextInProgress;
+        else document.getElementById(handlerId).innerText = btnTextInProgress;
+
         var xhr = new XMLHttpRequest();
         xhr.open("POST", "/make-report", true);
         xhr.setRequestHeader(
@@ -135,28 +155,26 @@
         // xhr.onerror = _ => console.error(12, "xhr error");
         xhr.onload = () => {
           // a || button
-          if(document.getElementById(handlerId).hasAttribute('value'))
+          if (document.getElementById(handlerId).hasAttribute("value"))
             document.getElementById(handlerId).value = btnTextInReady;
-          else
-            document.getElementById(handlerId).innerText = btnTextInReady;
-          
-          document.getElementById(handlerId).disabled = false;
-          
-          if(xhr.status === 500){
-            document.getElementById("report-link").innerHTML = '<b>Произошла ошибка. Убедитесь в правильности адреса</b>'
+          else document.getElementById(handlerId).innerText = btnTextInReady;
 
-          }
-          if (xhr.status === 200 && xhr.responseText ) {
+          document.getElementById(handlerId).disabled = false;
+
+          if (xhr.status === 500) {
             document.getElementById("report-link").innerHTML =
-            '<a href="/show-report" class="btn btn-show-report">Посмотреть отчёт</a>';
-            
+              "<b>Произошла ошибка. Убедитесь в правильности адреса</b>";
+          }
+          if (xhr.status === 200 && xhr.responseText) {
+            document.getElementById("report-link").innerHTML =
+              '<a href="/show-report" class="btn btn-show-report">Посмотреть отчёт</a>';
           }
         };
-        xhr.send(postRequestData); 
-      }
+        xhr.send(postRequestData);
+      };
     </script>
     <style>
-      :root{
+      :root {
         --bg-color: #12475f;
       }
       * {
@@ -219,17 +237,16 @@
       /* FORM */
       .make-report-form {
         display: flex;
-        flex-direction: column
+        flex-direction: column;
       }
-      .make-report-form #report-urls{
+      .make-report-form #report-urls {
         margin-bottom: 0.5rem;
         display: flex;
         flex-direction: column;
         /* justify-content: space-around */
         /* align-items: stretch        */
-        
       }
-      .make-report-form #report-urls input{
+      .make-report-form #report-urls input {
         padding: 0.3rem 2rem;
         font-size: 1.5rem;
       }
@@ -237,23 +254,23 @@
         opacity: 0;
         animation-name: new-url;
         animation-duration: 2000ms;
-        animation-delay: 150ms; 
+        animation-delay: 150ms;
         animation-timing-function: ease-in-out;
         animation-fill-mode: forwards;
       }
       @keyframes new-url {
-      0% {
-        opacity: 0;
-        transform: scale(0) translateY(-10px)
+        0% {
+          opacity: 0;
+          transform: scale(0) translateY(-10px);
+        }
+        60% {
+          transform: scale(1.2) translateY(5px);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) translateY(0px);
+        }
       }
-      60% {
-        transform: scale(1.2) translateY(5px)
-      }
-      100% {
-        opacity: 1;
-        transform: scale(1) translateY(0px);
-      }
-    }
       #report-urls-control input {
         margin-bottom: 0.5rem;
         padding: 1rem 2rem;
@@ -274,7 +291,7 @@
       #report-urls-control input:last-child:hover {
         background-color: darkred;
       }
-      #report-maker{
+      #report-maker {
         padding: 1rem 2rem;
         background-color: var(--bg-color);
         color: #fff;
@@ -286,14 +303,14 @@
         animation-duration: 3s;
         animation-delay: 3s;
         animation-fill-mode: forwards;
-        
+
         transition-property: transform;
         transition-duration: 1s;
       }
       #report-maker:hover {
         background-color: darkred;
         transform: scale(1.1);
-      }   
+      }
       /* /FORM */
       .btn {
         display: inline-block;
@@ -325,12 +342,12 @@
           opacity: 1;
         }
       }
-      .btn-show-report{
-        animation-delay: 0s
+      .btn-show-report {
+        animation-delay: 0s;
       }
 
-                              /* MEDIA QUERIS */
-      @media screen and (max-width:320px){
+      /* MEDIA QUERIS */
+      @media screen and (max-width: 320px) {
         #showcase {
           height: 200px;
         }
@@ -358,9 +375,7 @@
         }
       }
 
-      @media screen 
-      and (min-width: 321px) 
-      and (max-width:768px){
+      @media screen and (min-width: 321px) and (max-width: 768px) {
         #showcase {
           height: 200px;
         }

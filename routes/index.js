@@ -1,4 +1,4 @@
-const pages = require('./pagesRoutes')
-const report = require('./reportRoutes')
+const pages = require("./pagesRoutes");
+const report = require("./reportRoutes");
 
-module.exports = [].concat(report, pages)
+module.exports = [].concat(report, pages);

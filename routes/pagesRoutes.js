@@ -4,7 +4,7 @@ const routes = [
     path: "/",
     handler: (request, h) => {
       let q = "";
-      return h.view("index", { test: q });
+      return h.view("index");
     }
   },
   {
